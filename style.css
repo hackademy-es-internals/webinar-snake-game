@@ -79,7 +79,7 @@ canvas {
     margin-right: 10px;
 }
 
-#fruit, #virus {
+#target, #virus {
     display: none;
 }
 

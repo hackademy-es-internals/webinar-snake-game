@@ -262,21 +262,29 @@ function drawSnake() {
         drawSnakeHead("red");
         setTimeout(()=>{ 
             scoreModal.textContent = totalTail;
-            $('#alertModal').modal('show');
+            // $('#alertModal').modal('show');
+            const myModalEl = document.getElementById('alertModal')
+            const modalBtn = document.getElementById('modal-btn')
+
+            var myModal = new bootstrap.Modal(myModalEl, {});
+
+            myModal.show()
+
             //if modal is shown, remove the keydown event listener so that snake doesn't move 
-            $( "#alertModal" ).on('shown.bs.modal', function(){
+            myModalEl.addEventListener('show.bs.modal', event => {
                 window.removeEventListener("keydown", pressedKey);
-            });
+            })
             //when modal hides, reset every variable and add keydown event listener again
-            $('#alertModal').on('hidden.bs.modal', function () {
+            myModalEl.addEventListener('hidden.bs.modal', event => {
                 context.clearRect(0, 0, 640, 640);
                 score.innerText = 0;
                 window.addEventListener("keydown", pressedKey);
                 reset();
-              })
+            })
             modalBtn.addEventListener("click", ()=>{
                 context.clearRect(0, 0, 640, 640);
                 score.innerText = 0;
+                myModal.hide()
             });
         }, 1000);
     }
