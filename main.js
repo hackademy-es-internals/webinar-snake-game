@@ -4,15 +4,15 @@ var score = document.getElementById("score");
 var startBtn = document.getElementById("startBtn");
 var pauseBtn = document.getElementById("pauseBtn");
 var resumeBtn = document.getElementById("resumeBtn");
-var fruit = document.getElementById("fruit");
+var target = document.getElementById("target");
 var virus = document.getElementById("virus");
 
-var snakeHeadX, snakeHeadY, fruitX, fruitY, virusX, virusY, tail, totalTail, directionVar, direction, previousDir;
+var snakeHeadX, snakeHeadY, targetX, targetY, virusX, virusY, tail, totalTail, directionVar, direction, previousDir;
 var speed=1, xSpeed, ySpeed;
 const scale = 20;
 var rows = canvas.height / scale;
 var columns = canvas.width / scale;
-var min = scale / 10; //for min coordinate of fruit
+var min = scale / 10; //for min coordinate of target
 var max = rows - min; //for max 
 var gameInterval,  //interval after which screen will be updated
     virusInterval, //interval after which virus position will be updated
@@ -50,7 +50,7 @@ function startGame() {
     reset();
     gameStarted=true;
     playing=true;
-    fruitPosition();
+    targetPosition();
     virusPosition();
     main();
 }
@@ -131,7 +131,7 @@ function changeDirection() {
     }
 }
 
-//random coordinates for fruit or virus
+//random coordinates for target or virus
 function generateCoordinates() {
     let xCoordinate = (Math.floor(Math.random() * (max - min) + min)) * scale;
     let yCoordinate = (Math.floor(Math.random() * (max - min) + min)) * scale;
@@ -180,7 +180,7 @@ function checkCollision() {
 //-----------------------------------------------------SNAKE-----------------------------------------------------------//
 function drawSnakeHead(color) {
         context.beginPath();
-        context.drawImage(fruit,snakeHeadX, snakeHeadY)
+        context.drawImage(target,snakeHeadX, snakeHeadY)
         // context.arc(snakeHeadX+scale/2, snakeHeadY+scale/2, scale/2, 0, 2 * Math.PI);
         // context.rect(snakeHeadX+scale/2, snakeHeadY+scale/2, 30,30);
         // context.fillStyle = "#000000";
@@ -215,7 +215,7 @@ function drawSnakeTail() {
             // context.fillStyle = "#000";
             // context.arc((tail[i].tailX+scale/2), (tail[i].tailY+scale/2), tailRadius, 0, 2 * Math.PI);
             // context.fill();
-            context.drawImage(fruit,tail[i].tailX+scale/4, tail[i].tailY+scale/4,tailRadius,tailRadius)
+            context.drawImage(target,tail[i].tailX+scale/4, tail[i].tailY+scale/4,tailRadius,tailRadius)
 
         }
 }
@@ -245,13 +245,13 @@ function moveSnakeBack()
     snakeHeadX -= xSpeed;
     snakeHeadY -= ySpeed;
     drawVirus();
-    drawFruit();
+    drawTarget();
     drawSnakeTail();
 }
 
 //display snake
 function drawSnake() {
-    drawSnakeHead("#7d4350");
+    drawSnakeHead();
     drawSnakeTail();
     if (checkCollision()) {
         clearInterval(gameInterval);
@@ -294,22 +294,22 @@ function drawVirus() {
     context.drawImage(virus, virusX, virusY, scale, scale);
 }
 
-//------------------------------------------------------FRUIT-----------------------------------------------------------//
-//generate random fruit position within canvas boundaries
-function fruitPosition() {
-    let fruit=generateCoordinates();
-    fruitX=fruit.xCoordinate;
-    fruitY=fruit.yCoordinate;
+//------------------------------------------------------target-----------------------------------------------------------//
+//generate random target position within canvas boundaries
+function targetPosition() {
+    let target=generateCoordinates();
+    targetX=target.xCoordinate;
+    targetY=target.yCoordinate;
 }
 
-//draw image of fruit
-function drawFruit() {
-    context.drawImage(fruit, fruitX, fruitY, scale, scale);
+//draw image of target
+function drawTarget() {
+    context.drawImage(target, targetX, targetY, scale, scale);
 }
 
 //------------------------------------------------------MAIN GAME-----------------------------------------------------------//
 function checkSamePosition() {
-    if(fruitX==virusX && fruitY==virusY) {
+    if(targetX==virusX && targetY==virusY) {
         virusPosition();
     }
     for(let i=0; i< tail.length; i++){
@@ -320,9 +320,9 @@ function checkSamePosition() {
         }
     }
     for(let i=0; i< tail.length; i++){
-        if(fruitX===tail[i].tailX && fruitY===tail[i].tailY)
+        if(targetX===tail[i].tailX && targetY===tail[i].tailY)
         {
-            fruitPosition();
+            targetPosition();
             break;
         }
     }
@@ -335,14 +335,12 @@ function main() {
         context.clearRect(0, 0, 640, 640);
         checkSamePosition();
         drawVirus();
-        drawFruit();
+        drawTarget();
         moveSnakeForward();
         drawSnake();
-        console.log('x',snakeHeadX,fruitX)
-        console.log('y',snakeHeadY,fruitY)
 
-        //check if snake eats the fruit - increase size of its tail, update score and find new fruit position
-        if (snakeHeadX === fruitX && snakeHeadY === fruitY) {
+        //check if snake eats the target - increase size of its tail, update score and find new target position
+        if (snakeHeadX === targetX && snakeHeadY === targetY) {
             totalTail++;
             //increase the speed of game after every 20 points
             if(totalTail%20==0 && intervalDuration>minDuration) {
@@ -351,7 +349,7 @@ function main() {
                 intervalDuration=intervalDuration-10;
                 main();
             }
-            fruitPosition();
+            targetPosition();
         }
         score.innerText = totalTail;
 
