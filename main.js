@@ -66,8 +66,8 @@ function pauseGame() {
 function resumeGame()
 {
     main();
-    pauseBtn.style.backgroundColor="#fff";
-    resumeBtn.style.backgroundColor="#ccc";
+    // pauseBtn.style.backgroundColor="#fff";
+    // resumeBtn.style.backgroundColor="#ccc";
     playing=true;
 }
 
@@ -75,15 +75,19 @@ function resumeGame()
 window.addEventListener("keydown", pressedKey);
 
 function pressedKey() {
-    if(event.keyCode===32 && gameStarted) {
+   if(event.keyCode===32 && gameStarted) {
         if(playing) {
             pauseGame();
         }
         else{
             resumeGame();
         }
-    }
-    else {
+    }else if(event.keyCode===65){
+        clearInterval(gameInterval);
+        window.clearInterval(virusInterval);
+        intervalDuration=intervalDuration-10;
+        main();
+    } else {
         previousDir = direction;
         directionVar = event.key.replace("Arrow", "");
         changeDirection();
@@ -149,27 +153,11 @@ function checkCollision() {
         }
     }
     //with boundaries
-    // if(snakeHeadX >= canvas.width || snakeHeadX < 0 || snakeHeadY >= canvas.height || snakeHeadY < 0)
-    // {
-    //     boundaryCollision=true;
-    // }
-    // MOD1 - pass the wall
-    if(snakeHeadX >= canvas.width)
+    if(snakeHeadX >= canvas.width || snakeHeadX < 0 || snakeHeadY >= canvas.height || snakeHeadY < 0)
     {
-        snakeHeadX = 0
+        boundaryCollision=true;
     }
-    if(snakeHeadX < 0 )
-    {
-        snakeHeadX = canvas.width
-    }
-    if(snakeHeadY >= canvas.height)
-    {
-        snakeHeadY = 0
-    }
-    if(snakeHeadY < 0)
-    {
-        snakeHeadY = canvas.height
-    }
+    
     //with virus
     if(snakeHeadX===virusX && snakeHeadY===virusY) {
         virusCollision=true;
@@ -181,30 +169,6 @@ function checkCollision() {
 function drawSnakeHead(color) {
         context.beginPath();
         context.drawImage(target,snakeHeadX, snakeHeadY)
-        // context.arc(snakeHeadX+scale/2, snakeHeadY+scale/2, scale/2, 0, 2 * Math.PI);
-        // context.rect(snakeHeadX+scale/2, snakeHeadY+scale/2, 30,30);
-        // context.fillStyle = "#000000";
-        // context.fill();
-        //eyes
-        // context.beginPath();
-        // if(direction==="Up") {
-        //     context.arc(snakeHeadX+(scale/5), snakeHeadY+(scale/5), scale/8, 0, 2 * Math.PI);
-        //     context.arc(snakeHeadX+scale-(scale/5), snakeHeadY+(scale/5), scale/8, 0, 2 * Math.PI);
-        // }
-        // else if(direction==="Down") {
-        //     context.arc(snakeHeadX+(scale/5), snakeHeadY+scale-(scale/5), scale/8, 0, 2 * Math.PI);
-        //     context.arc(snakeHeadX+scale-(scale/5), snakeHeadY+scale-(scale/5), scale/8, 0, 2 * Math.PI);
-        // }
-        // else if(direction==="Left") {
-        //     context.arc(snakeHeadX+(scale/5), snakeHeadY+(scale/5), scale/8, 0, 2 * Math.PI);
-        //     context.arc(snakeHeadX+(scale/5), snakeHeadY+scale-(scale/5), scale/8, 0, 2 * Math.PI);
-        // }
-        // else {
-        //     context.arc(snakeHeadX+scale-(scale/5), snakeHeadY+(scale/5), scale/8, 0, 2 * Math.PI);
-        //     context.arc(snakeHeadX+scale-(scale/5), snakeHeadY+scale-(scale/5), scale/8, 0, 2 * Math.PI);
-        // }
-        // context.fillStyle = "#ffed00";
-        // context.fill();
 }
 
 function drawSnakeTail() {
@@ -212,9 +176,6 @@ function drawSnakeTail() {
         for (i = 0; i < tail.length; i++) {
             tailRadius=tailRadius+((scale/2-scale/4)/tail.length); // decreasind size
             context.beginPath();
-            // context.fillStyle = "#000";
-            // context.arc((tail[i].tailX+scale/2), (tail[i].tailY+scale/2), tailRadius, 0, 2 * Math.PI);
-            // context.fill();
             context.drawImage(target,tail[i].tailX+scale/4, tail[i].tailY+scale/4,tailRadius,tailRadius)
 
         }
@@ -262,7 +223,7 @@ function drawSnake() {
         drawSnakeHead("red");
         setTimeout(()=>{ 
             scoreModal.textContent = totalTail;
-            // $('#alertModal').modal('show');
+           
             const myModalEl = document.getElementById('alertModal')
             const modalBtn = document.getElementById('modal-btn')
 
@@ -348,7 +309,7 @@ function main() {
         drawSnake();
 
         //check if snake eats the target - increase size of its tail, update score and find new target position
-        if (snakeHeadX === targetX && snakeHeadY === targetY) {
+        if (snakeHeadX === targetX && snakeHeadY === targetY-scale) {
             totalTail++;
             //increase the speed of game after every 20 points
             if(totalTail%20==0 && intervalDuration>minDuration) {
