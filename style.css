@@ -3,7 +3,8 @@
     --main-color: #fe0;
 }
 body {
-    background-image: url('/images/HK_bg_zoom_nyan_cat.jpg');
+    font-family: 'Roboto Mono', monospace;
+    background-image: url('/images/bg_slide.jpg');
     margin: 0;
     padding: 0;
 }
@@ -25,10 +26,9 @@ h2 {
 }
 
 canvas {
-    /* background-image: url(./images/green.jpg);
+    background-image: url(images/bg_game.jpg);
     background-repeat: no-repeat;
-    background-size: cover; */
-    background-color: gray;
+    background-size: cover;
 }
 
 .gamePage {
@@ -79,11 +79,18 @@ canvas {
     margin-right: 10px;
 }
 
-#target, #virus {
+.score {
+    border: solid 3px black;
+    border-radius:100px;
+    background-color: black;
+    color: var(--main-color);
+}
+
+#head, #virus, .target {
     display: none;
 }
 
-#snake {
+.result-img{
     height: 100px;
     width: 100px;
     margin-bottom: 20px;
@@ -104,4 +111,8 @@ canvas {
 
 #pauseBtn:hover, #resumeBtn:hover {
     background-color: #ccc;
+}
+
+.form-check-input:checked {
+    background-color: black;
 }

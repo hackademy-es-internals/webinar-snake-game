@@ -4,9 +4,12 @@ var score = document.getElementById("score");
 var startBtn = document.getElementById("startBtn");
 var pauseBtn = document.getElementById("pauseBtn");
 var resumeBtn = document.getElementById("resumeBtn");
-var target = document.getElementById("target");
+var targets = Array.from(document.querySelectorAll('.target'));
+var head = document.getElementById("head");
 var virus = document.getElementById("virus");
 
+var targetsEaten = [];
+var target,tocado;
 var snakeHeadX, snakeHeadY, targetX, targetY, virusX, virusY, tail, totalTail, directionVar, direction, previousDir;
 var speed=1, xSpeed, ySpeed;
 const scale = 20;
@@ -15,13 +18,12 @@ var columns = canvas.width / scale;
 var min = scale / 10; //for min coordinate of target
 var max = rows - min; //for max 
 var gameInterval,  //interval after which screen will be updated
-    virusInterval, //interval after which virus position will be updated
-    intervalDuration=150, //starting screen updation interval
-    minDuration=75; //minimum screen updation interval
+virusInterval, //interval after which virus position will be updated
+intervalDuration=150, //starting screen updation interval
+minDuration=75; //minimum screen updation interval
 var playing, gameStarted;
 var boundaryCollision;
 var tail0;
-
 
 startBtn.addEventListener("click", startGame);
 
@@ -40,8 +42,12 @@ function reset() {
     ySpeed = 0;
     snakeHeadX = 0;
     snakeHeadY = 0;
-    // pauseBtn.style.backgroundColor="#fff";
-    // resumeBtn.style.backgroundColor="#fff";
+    targets =  Array.from(document.querySelectorAll('.target'))
+    if(targets.length>0){
+        target = targets[0];
+        targets.splice(0,1);
+    }
+    tocado=false;
     playing=false, gameStarted=false;
     boundaryCollision=false;
 }
@@ -58,16 +64,13 @@ function startGame() {
 function pauseGame() {
     window.clearInterval(gameInterval);
     window.clearInterval(virusInterval);
-    // pauseBtn.style.backgroundColor="#ccc";
-    // resumeBtn.style.backgroundColor="#fff";
+    
     playing=false;
 }
 
 function resumeGame()
 {
     main();
-    // pauseBtn.style.backgroundColor="#fff";
-    // resumeBtn.style.backgroundColor="#ccc";
     playing=true;
 }
 
@@ -75,63 +78,61 @@ function resumeGame()
 window.addEventListener("keydown", pressedKey);
 
 function pressedKey() {
-   if(event.keyCode===32 && gameStarted) {
+    
+    // space to pause and resume
+    if(event.keyCode===32 && gameStarted) {
         if(playing) {
             pauseGame();
         }
         else{
             resumeGame();
         }
-    }else if(event.keyCode===65){
-        clearInterval(gameInterval);
-        window.clearInterval(virusInterval);
-        intervalDuration=intervalDuration-10;
-        main();
-    } else {
+    }
+    else {
         previousDir = direction;
         directionVar = event.key.replace("Arrow", "");
         changeDirection();
-    }
+    }  
 }
 
 //change the direction of snake based on arrow key pressed
 function changeDirection() {
     switch (directionVar) {
         case "Up":
-            //move "up" only when previous direction is not "down"
-            if (previousDir !== "Down") {
-                direction=directionVar;
-                xSpeed = 0;
-                ySpeed = scale * -speed;
-            } 
-            break;
-
+        //move "up" only when previous direction is not "down"
+        if (previousDir !== "Down") {
+            direction=directionVar;
+            xSpeed = 0;
+            ySpeed = scale * -speed;
+        } 
+        break;
+        
         case "Down":
-            //move "down" only when previous direction is not "up"
-            if (previousDir !== "Up") {
-                direction=directionVar;
-                xSpeed = 0;
-                ySpeed = scale * speed;
-            } 
-            break;
-
+        //move "down" only when previous direction is not "up"
+        if (previousDir !== "Up") {
+            direction=directionVar;
+            xSpeed = 0;
+            ySpeed = scale * speed;
+        } 
+        break;
+        
         case "Left":
-            //move "left" only when previous direction is not "right"
-            if (previousDir !== "Right") {
-                direction=directionVar;
-                xSpeed = scale * -speed;
-                ySpeed = 0;
-            } 
-            break;
-
+        //move "left" only when previous direction is not "right"
+        if (previousDir !== "Right") {
+            direction=directionVar;
+            xSpeed = scale * -speed;
+            ySpeed = 0;
+        } 
+        break;
+        
         case "Right":
-            //move "right" only when previous direction is not "left"
-            if (previousDir !== "Left") {
-                direction=directionVar;
-                xSpeed = scale * speed;
-                ySpeed = 0;
-            } 
-            break;
+        //move "right" only when previous direction is not "left"
+        if (previousDir !== "Left") {
+            direction=directionVar;
+            xSpeed = scale * speed;
+            ySpeed = 0;
+        } 
+        break;
     }
 }
 
@@ -167,18 +168,18 @@ function checkCollision() {
 
 //-----------------------------------------------------SNAKE-----------------------------------------------------------//
 function drawSnakeHead(color) {
-        context.beginPath();
-        context.drawImage(target,snakeHeadX, snakeHeadY)
+    context.beginPath();
+    context.drawImage(head,snakeHeadX, snakeHeadY)
 }
 
 function drawSnakeTail() {
     let tailRadius = scale;
-        for (i = 0; i < tail.length; i++) {
-            tailRadius=tailRadius+((scale/2-scale/4)/tail.length); // decreasind size
-            context.beginPath();
-            context.drawImage(target,tail[i].tailX+scale/4, tail[i].tailY+scale/4,tailRadius,tailRadius)
-
-        }
+    for (i = 0; i < tail.length; i++) {
+        tailRadius=tailRadius+((scale/2-scale/4)/tail.length); // decreasind size
+        context.beginPath();
+        context.drawImage(targetsEaten[i],tail[i].tailX+scale/4, tail[i].tailY+scale/4,30,30)
+        
+    }
 }
 
 //shift snake's previous positions to next position
@@ -220,17 +221,17 @@ function drawSnake() {
         if(boundaryCollision) {
             moveSnakeBack();
         }
-        drawSnakeHead("red");
+        drawSnakeHead();
         setTimeout(()=>{ 
             scoreModal.textContent = totalTail;
-           
+            
             const myModalEl = document.getElementById('alertModal')
             const modalBtn = document.getElementById('modal-btn')
-
+            
             var myModal = new bootstrap.Modal(myModalEl, {});
-
+            
             myModal.show()
-
+            
             //if modal is shown, remove the keydown event listener so that snake doesn't move 
             myModalEl.addEventListener('show.bs.modal', event => {
                 window.removeEventListener("keydown", pressedKey);
@@ -264,63 +265,113 @@ function drawVirus() {
 }
 
 //------------------------------------------------------target-----------------------------------------------------------//
-//generate random target position within canvas boundaries
-function targetPosition() {
-    let target=generateCoordinates();
-    targetX=target.xCoordinate;
-    targetY=target.yCoordinate;
-}
-
-//draw image of target
-function drawTarget() {
-    context.drawImage(target, targetX, targetY, scale, scale);
-}
-
-//------------------------------------------------------MAIN GAME-----------------------------------------------------------//
-function checkSamePosition() {
-    if(targetX==virusX && targetY==virusY) {
-        virusPosition();
+// generate random number in range
+function between(min, max) {  
+    return Math.floor(
+        Math.random() * (max - min) + min
+        )
     }
-    for(let i=0; i< tail.length; i++){
-        if(virusX===tail[i].tailX && virusY===tail[i].tailY)
-        {
+    //generate random target position within canvas boundaries
+    function targetPosition() {
+        let target=generateCoordinates();
+        targetX=target.xCoordinate;
+        targetY=target.yCoordinate;
+    }
+    
+    //draw image of target
+    function drawTarget() {
+        context.drawImage(target, targetX, targetY, 30, 30);
+    }
+    
+    //------------------------------------------------------MAIN GAME-----------------------------------------------------------//
+    function checkSamePosition() {
+        if(targetX==virusX && targetY==virusY) {
             virusPosition();
-            break;
         }
-    }
-    for(let i=0; i< tail.length; i++){
-        if(targetX===tail[i].tailX && targetY===tail[i].tailY)
-        {
-            targetPosition();
-            break;
-        }
-    }
-}
-
-function main() {
-    //update state at specified interval
-    virusInterval = window.setInterval(virusPosition, 10000);
-    gameInterval = window.setInterval(() => {
-        context.clearRect(0, 0, 640, 640);
-        checkSamePosition();
-        drawVirus();
-        drawTarget();
-        moveSnakeForward();
-        drawSnake();
-
-        //check if snake eats the target - increase size of its tail, update score and find new target position
-        if (snakeHeadX === targetX && snakeHeadY === targetY-scale) {
-            totalTail++;
-            //increase the speed of game after every 20 points
-            if(totalTail%20==0 && intervalDuration>minDuration) {
-                clearInterval(gameInterval);
-                window.clearInterval(virusInterval);
-                intervalDuration=intervalDuration-10;
-                main();
+        for(let i=0; i< tail.length; i++){
+            if(virusX===tail[i].tailX && virusY===tail[i].tailY)
+            {
+                virusPosition();
+                break;
             }
-            targetPosition();
         }
-        score.innerText = totalTail;
-
-    }, intervalDuration);
-}
+        for(let i=0; i< tail.length; i++){
+            if(targetX===tail[i].tailX && targetY===tail[i].tailY)
+            {
+                targetPosition();
+                break;
+            }
+        }
+    }
+    
+    function main() {
+        //update state at specified interval
+        virusInterval = window.setInterval(virusPosition, 10000);
+        gameInterval = window.setInterval(() => {
+            
+            context.clearRect(0, 0, 640, 640);
+            checkSamePosition();
+            drawVirus();
+            console.log(targets.length)
+            
+            // get random image
+            if(tocado){
+                if(targets.length > 0){
+                    target = targets[0]
+                    targets.splice(0,1);
+                    tocado = false;
+                }else{
+                    clearInterval(gameInterval);
+                    clearInterval(virusInterval);
+                    const myWinModalEl = document.getElementById('winModal')
+                    const modalWinBtn = document.getElementById('win-modal-btn')
+                    
+                    var myWinModal = new bootstrap.Modal(myWinModalEl, {});
+                    
+                    myWinModal.show()
+                    
+                    //if modal is shown, remove the keydown event listener so that snake doesn't move 
+                    myWinModalEl.addEventListener('show.bs.modal', event => {
+                        window.removeEventListener("keydown", pressedKey);
+                    })
+                    //when modal hides, reset every variable and add keydown event listener again
+                    myWinModalEl.addEventListener('hidden.bs.modal', event => {
+                        context.clearRect(0, 0, 640, 640);
+                        score.innerText = 0;
+                        window.addEventListener("keydown", pressedKey);
+                        reset();
+                    })
+                    modalWinBtn.addEventListener("click", ()=>{
+                        context.clearRect(0, 0, 640, 640);
+                        score.innerText = 0;
+                        myWinModal.hide()
+                    });
+                    // reset()
+                }
+            }
+            
+            drawTarget();
+            
+            
+            moveSnakeForward();
+            drawSnake();
+            
+            //check if snake eats the target - increase size of its tail, update score and find new target position
+            if (snakeHeadX === targetX && snakeHeadY === targetY-scale) {
+                totalTail++;
+                tocado = true;
+                targetsEaten.push(target);
+                console.log(targetsEaten)
+                //increase the speed of game after every 20 points
+                if(totalTail%20==0 && intervalDuration>minDuration) {
+                    clearInterval(gameInterval);
+                    window.clearInterval(virusInterval);
+                    intervalDuration=intervalDuration-10;
+                    main();
+                }
+                targetPosition();
+            }
+            score.innerText = totalTail;
+            
+        }, intervalDuration);
+    }
