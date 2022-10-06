@@ -86,7 +86,7 @@ canvas {
     color: var(--main-color);
 }
 
-#head, #virus, .target {
+#head, .virus, .target {
     display: none;
 }
 
