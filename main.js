@@ -15,6 +15,8 @@ var targetsEaten = [];
 var target,tocado;
 var snakeHeadX, snakeHeadY, targetX, targetY, virusX, virusY, tail, totalTail, directionVar, direction, previousDir;
 var speed=1, xSpeed, ySpeed;
+var xSpace, ySpace;
+var ratio = 15;
 const scale = 20;
 var rows = canvas.height / scale;
 var columns = canvas.width / scale;
@@ -43,6 +45,8 @@ function reset() {
     previousDir = "Right";
     xSpeed = scale * speed;
     ySpeed = 0;
+    xSpace = ratio * -speed;
+    ySpace = 0;
     snakeHeadX = 0;
     snakeHeadY = 0;
     targets =  Array.from(document.querySelectorAll('.target'))
@@ -109,6 +113,8 @@ function changeDirection() {
             direction=directionVar;
             xSpeed = 0;
             ySpeed = scale * -speed;
+            xSpace = 0;
+            ySpace = ratio * speed;
         } 
         break;
         
@@ -118,6 +124,8 @@ function changeDirection() {
             direction=directionVar;
             xSpeed = 0;
             ySpeed = scale * speed;
+            xSpace = 0;
+            ySpace = ratio * -speed;
         } 
         break;
         
@@ -127,6 +135,8 @@ function changeDirection() {
             direction=directionVar;
             xSpeed = scale * -speed;
             ySpeed = 0;
+            xSpace = ratio * speed;
+            ySpace = 0;
         } 
         break;
         
@@ -136,6 +146,8 @@ function changeDirection() {
             direction=directionVar;
             xSpeed = scale * speed;
             ySpeed = 0;
+            xSpace = ratio * -speed;
+            ySpace = 0;
         } 
         break;
     }
@@ -185,7 +197,10 @@ function moveSnakeForward() {
     tail0=tail[0];
     for (let i = 0; i < tail.length - 1; i++) {
         tail[i] = tail[i + 1];
-      
+        tail[i].tailX += xSpace;
+        tail[i].tailY += ySpace;
+
+        
     }
     tail[totalTail] = { tailX: snakeHeadX, tailY: snakeHeadY };
     snakeHeadX += xSpeed;
