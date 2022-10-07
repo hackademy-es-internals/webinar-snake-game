@@ -14,7 +14,8 @@ var points = 0;
 var targetsEaten = [];
 var target,tocado;
 var snakeHeadX, snakeHeadY, targetX, targetY, virusX, virusY, tail, totalTail, directionVar, direction, previousDir;
-var speed=1, xSpeed, ySpeed;
+var speed=1, xSpeed, ySpeed, xSpace, ySpace;
+var ratio = 10;
 const scale = 20;
 var rows = canvas.height / scale;
 var columns = canvas.width / scale;
@@ -43,6 +44,8 @@ function reset() {
     previousDir = "Right";
     xSpeed = scale * speed;
     ySpeed = 0;
+    xSpace = 50 * speed;
+    ySpace = 0;
     snakeHeadX = 0;
     snakeHeadY = 0;
     targets =  Array.from(document.querySelectorAll('.target'))
@@ -109,6 +112,8 @@ function changeDirection() {
             direction=directionVar;
             xSpeed = 0;
             ySpeed = scale * -speed;
+            xSpace = 0;
+            ySpace = ratio * speed;
         } 
         break;
         
@@ -118,6 +123,8 @@ function changeDirection() {
             direction=directionVar;
             xSpeed = 0;
             ySpeed = scale * speed;
+            xSpace = 0;
+            ySpace = ratio * -speed;
         } 
         break;
         
@@ -127,6 +134,8 @@ function changeDirection() {
             direction=directionVar;
             xSpeed = scale * -speed;
             ySpeed = 0;
+            xSpace = ratio * speed;
+            ySpace = 0;
         } 
         break;
         
@@ -136,6 +145,8 @@ function changeDirection() {
             direction=directionVar;
             xSpeed = scale * speed;
             ySpeed = 0;
+            xSpace = ratio * -speed;
+            ySpace = 0;
         } 
         break;
     }
@@ -164,7 +175,8 @@ function checkCollision() {
         boundaryCollision=true;
     }
     
-    return (tailCollision || boundaryCollision);
+    // return (tailCollision || boundaryCollision);
+    return false;
 }
 
 //-----------------------------------------------------SNAKE-----------------------------------------------------------//
@@ -185,8 +197,13 @@ function moveSnakeForward() {
     tail0=tail[0];
     for (let i = 0; i < tail.length - 1; i++) {
         tail[i] = tail[i + 1];
+        tail[i].tailX += xSpace
+        tail[i].tailY += ySpace
     }
-    tail[totalTail - 1] = { tailX: snakeHeadX, tailY: snakeHeadY };
+    // console.log("shx",snakeHeadX);
+    // console.log("shxsp",snakeHeadX+xSpace);
+    tail[totalTail] = { tailX: snakeHeadX, tailY: snakeHeadY };
+    console.log(tail)
     snakeHeadX += xSpeed;
     snakeHeadY += ySpeed;
 }
