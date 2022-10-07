@@ -14,8 +14,9 @@ var points = 0;
 var targetsEaten = [];
 var target,tocado;
 var snakeHeadX, snakeHeadY, targetX, targetY, virusX, virusY, tail, totalTail, directionVar, direction, previousDir;
-var speed=1, xSpeed, ySpeed, xSpace, ySpace;
-var ratio = 10;
+var speed=1, xSpeed, ySpeed;
+var xSpace, ySpace;
+var ratio = 15;
 const scale = 20;
 var rows = canvas.height / scale;
 var columns = canvas.width / scale;
@@ -44,7 +45,7 @@ function reset() {
     previousDir = "Right";
     xSpeed = scale * speed;
     ySpeed = 0;
-    xSpace = 50 * speed;
+    xSpace = ratio * -speed;
     ySpace = 0;
     snakeHeadX = 0;
     snakeHeadY = 0;
@@ -197,13 +198,12 @@ function moveSnakeForward() {
     tail0=tail[0];
     for (let i = 0; i < tail.length - 1; i++) {
         tail[i] = tail[i + 1];
-        tail[i].tailX += xSpace
-        tail[i].tailY += ySpace
+        tail[i].tailX += xSpace;
+        tail[i].tailY += ySpace;
+
+        
     }
-    // console.log("shx",snakeHeadX);
-    // console.log("shxsp",snakeHeadX+xSpace);
     tail[totalTail] = { tailX: snakeHeadX, tailY: snakeHeadY };
-    console.log(tail)
     snakeHeadX += xSpeed;
     snakeHeadY += ySpeed;
 }
@@ -338,7 +338,7 @@ function between(min, max) {
 
     function virusHit(){
         //check if snake hit the virus
-        if(snakeHeadX===virusX && snakeHeadY===virusY) {
+        if(Math.abs(snakeHeadX-virusX)<=20 && Math.abs(snakeHeadY-virusY)<=20) {
             return true
         }
 
@@ -347,7 +347,7 @@ function between(min, max) {
 
     function targetHit(){
         //check if snake eats the target - increase size of its tail, update score and find new target position
-        if (snakeHeadX === targetX && snakeHeadY === targetY-scale) {
+        if (Math.abs(snakeHeadX-targetX)<=20 && Math.abs(snakeHeadY-targetY)<=20) {
             
             return true;
         }
