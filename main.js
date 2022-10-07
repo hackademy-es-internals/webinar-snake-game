@@ -185,8 +185,9 @@ function moveSnakeForward() {
     tail0=tail[0];
     for (let i = 0; i < tail.length - 1; i++) {
         tail[i] = tail[i + 1];
+      
     }
-    tail[totalTail - 1] = { tailX: snakeHeadX, tailY: snakeHeadY };
+    tail[totalTail] = { tailX: snakeHeadX, tailY: snakeHeadY };
     snakeHeadX += xSpeed;
     snakeHeadY += ySpeed;
 }
@@ -321,7 +322,7 @@ function between(min, max) {
 
     function virusHit(){
         //check if snake hit the virus
-        if(snakeHeadX===virusX && snakeHeadY===virusY) {
+        if(Math.abs(snakeHeadX-virusX)<=20 && Math.abs(snakeHeadY-virusY)<=20) {
             return true
         }
 
@@ -330,7 +331,7 @@ function between(min, max) {
 
     function targetHit(){
         //check if snake eats the target - increase size of its tail, update score and find new target position
-        if (snakeHeadX === targetX && snakeHeadY === targetY-scale) {
+        if (Math.abs(snakeHeadX-targetX)<=20 && Math.abs(snakeHeadY-targetY)<=20) {
             
             return true;
         }
