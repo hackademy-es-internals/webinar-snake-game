@@ -174,12 +174,9 @@ function drawSnakeHead(color) {
 }
 
 function drawSnakeTail() {
-    let tailRadius = scale;
-    for (i = 0; i < tail.length; i++) {
-        tailRadius=tailRadius+((scale/2-scale/4)/tail.length); // decreasind size
+    for (i = 0; i < tail.length-1; i++) {
         context.beginPath();
-        context.drawImage(targetsEaten[i],tail[i].tailX+scale/4, tail[i].tailY+scale/4,40,40)
-        
+        context.drawImage(targetsEaten[targetsEaten.length-1-i],tail[i].tailX+scale/4, tail[i].tailY+scale/4);
     }
 }
 
@@ -188,7 +185,6 @@ function moveSnakeForward() {
     tail0=tail[0];
     for (let i = 0; i < tail.length - 1; i++) {
         tail[i] = tail[i + 1];
-        console.log(tail);
     }
     tail[totalTail - 1] = { tailX: snakeHeadX, tailY: snakeHeadY };
     snakeHeadX += xSpeed;
