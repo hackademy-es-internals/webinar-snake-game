@@ -32,7 +32,7 @@ canvas {
     background-image: url(images/bg_game.jpg);
     background-repeat: no-repeat;
     background-size: cover;
-    
+    border-radius: 20px;
 }
 
 .gamePage {
@@ -118,5 +118,6 @@ canvas {
 }
 
 .form-check-input:checked {
-    background-color: black;
+    background-color: green;
 }
+
