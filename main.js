@@ -164,6 +164,7 @@ function generateCoordinates() {
 function checkCollision() {
     let tailCollision=false;
     boundaryCollision=false;
+    
     //with its own tail
     for (let i = 0; i < tail.length; i++) {
         if (snakeHeadX == tail[i].tailX && snakeHeadY == tail[i].tailY) {
@@ -196,13 +197,13 @@ function drawSnakeTail() {
 //shift snake's previous positions to next position
 function moveSnakeForward() {
     tail0=tail[0];
+
     for (let i = 0; i < tail.length - 1; i++) {
         tail[i] = tail[i + 1];
         tail[i].tailX += xSpace;
-        tail[i].tailY += ySpace;
-
-        
+        tail[i].tailY += ySpace; 
     }
+
     tail[totalTail] = { tailX: snakeHeadX, tailY: snakeHeadY };
     snakeHeadX += xSpeed;
     snakeHeadY += ySpeed;
@@ -304,7 +305,7 @@ function between(min, max) {
                 totalTail++;
                 points++;
                 targetsEaten.push(target);
-                //increase the speed of game after every 20 points
+                //increase the speed of game after every 3 points
                 if(totalTail%3==0 && intervalDuration>minDuration) {
                     clearInterval(gameInterval);
                     window.clearInterval(virusInterval);
